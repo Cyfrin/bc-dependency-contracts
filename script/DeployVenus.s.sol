@@ -20,36 +20,42 @@ contract DeployScript is BCDeploy {
         vm.startBroadcast();
 
         address comptroller = bcDeployCreate(
-            type(MockComptroller).creationCode
+            abi.encodePacked(
+                type(MockComptroller).creationCode,
+                abi.encode(msg.sender)
+            )
         );
 
         address[] memory markets = new address[](5);
         markets[0] = bcDeployCreate(
             abi.encodePacked(
                 type(MockVToken).creationCode,
-                abi.encode("Venus USDC", "vUSDC", usdc)
+                abi.encode("Venus USDC", "vUSDC", usdc, msg.sender)
             )
         );
         markets[1] = bcDeployCreate(
             abi.encodePacked(
                 type(MockVToken).creationCode,
-                abi.encode("Venus WETH", "vWETH", weth)
+                abi.encode("Venus WETH", "vWETH", weth, msg.sender)
             )
         );
         markets[2] = bcDeployCreate(
             abi.encodePacked(
                 type(MockVToken).creationCode,
-                abi.encode("Venus WBTC", "vWBTC", wbtc)
+                abi.encode("Venus WBTC", "vWBTC", wbtc, msg.sender)
             )
         );
         markets[3] = bcDeployCreate(
             abi.encodePacked(
                 type(MockVToken).creationCode,
-                abi.encode("Venus DAI", "vDAI", dai)
+                abi.encode("Venus DAI", "vDAI", dai, msg.sender)
             )
         );
         markets[4] = bcDeployCreate(
-            type(MockVBNB).creationCode
+            abi.encodePacked(
+                type(MockVBNB).creationCode,
+                abi.encode(msg.sender)
+            )
         );
 
         for (uint256 i; i < markets.length; i++) {

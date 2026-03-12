@@ -14,8 +14,8 @@ contract MockVBNB is ERC20, IVBnb {
     error EthTransferFailed();
     error NotAdmin();
 
-    constructor() ERC20("Venus BNB", "vBNB") {
-        admin = msg.sender;
+    constructor(address admin_) ERC20("Venus BNB", "vBNB") {
+        admin = admin_;
     }
 
     /// @notice Supply native ETH and receive vBNB.

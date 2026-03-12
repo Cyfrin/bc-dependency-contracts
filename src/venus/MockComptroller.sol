@@ -24,8 +24,8 @@ contract MockComptroller is IComptroller {
         _;
     }
 
-    constructor() {
-        admin = msg.sender;
+    constructor(address _admin) {
+        admin = _admin;
     }
 
     function listMarket(

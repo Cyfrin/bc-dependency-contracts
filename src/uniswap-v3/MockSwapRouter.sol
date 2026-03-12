@@ -26,8 +26,8 @@ contract MockSwapRouter is ISwapRouter {
         _;
     }
 
-    constructor() {
-        admin = msg.sender;
+    constructor(address _admin) {
+        admin = _admin;
     }
 
     function setExchangeRate(

@@ -15,7 +15,10 @@ contract DeployScript is BCDeploy {
         vm.startBroadcast();
 
         address router = bcDeployCreate(
-            type(MockCCIPRouter).creationCode
+            abi.encodePacked(
+                type(MockCCIPRouter).creationCode,
+                abi.encode(msg.sender)
+            )
         );
 
         vm.stopBroadcast();

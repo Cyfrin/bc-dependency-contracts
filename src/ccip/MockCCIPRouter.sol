@@ -36,8 +36,8 @@ contract MockCCIPRouter is IRouterClient {
         _;
     }
 
-    constructor() {
-        admin = msg.sender;
+    constructor(address _admin) {
+        admin = _admin;
     }
 
     function addSupportedChain(uint64 chainSelector) external onlyAdmin {

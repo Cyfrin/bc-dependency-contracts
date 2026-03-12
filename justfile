@@ -5,23 +5,29 @@ bc-explorer-api := "https://block-explorer-api.testnet.battlechain.com/api"
 bc-chain-id := "627"
 verify-flags := "--verify --verifier-url " + bc-explorer-api + " --verifier custom --etherscan-api-key 1234"
 
+# Token addresses (from DeployFakeTokens broadcast)
+usdc := "0xb9bEab76Db81BdF8c863f2cA648dA8d3bB5CB1EE"
+weth := "0x4CAc28Fc96bb8fa0e6F94ef0E579384902142f42"
+wbtc := "0xB90cb0F537F2E7D11b165a8C5C79B7a593aBE4f0"
+dai  := "0x393cBd865554a543D992218d190EA9dcE47d9bC2"
+
 deploy-tokens:
     forge script script/DeployFakeTokens.s.sol --rpc-url {{ bc-rpc }} --broadcast --account $ACCOUNT --skip-simulation -g 300 --sender $SENDER {{ verify-flags }}
 
 deploy-chainlink:
     forge script script/DeployChainlink.s.sol --rpc-url {{ bc-rpc }} --broadcast --account $ACCOUNT --skip-simulation --sender $SENDER {{ verify-flags }}
 
-deploy-venus:
-    forge script script/DeployVenus.s.sol --rpc-url {{ bc-rpc }} --broadcast --account $ACCOUNT --skip-simulation --sender $SENDER {{ verify-flags }}
+deploy-venus _usdc=usdc _weth=weth _wbtc=wbtc _dai=dai:
+    forge script script/DeployVenus.s.sol --rpc-url {{ bc-rpc }} --broadcast --account $ACCOUNT --skip-simulation --sender $SENDER --sig "run(address,address,address,address)" {{ _usdc }} {{ _weth }} {{ _wbtc }} {{ _dai }} {{ verify-flags }}
 
-deploy-uniswap-v3:
-    forge script script/DeployUniswapV3.s.sol --rpc-url {{ bc-rpc }} --broadcast --account $ACCOUNT --skip-simulation --sender $SENDER {{ verify-flags }}
+deploy-uniswap-v3 _weth=weth:
+    forge script script/DeployUniswapV3.s.sol --rpc-url {{ bc-rpc }} --broadcast --account $ACCOUNT -vvvvv --skip-simulation -g 300 --gas-limit 30000000 --sender $SENDER --sig "run(address)" {{ _weth }} {{ verify-flags }}
 
 deploy-uniswap-v4:
     forge script script/DeployUniswapV4.s.sol --rpc-url {{ bc-rpc }} --broadcast --account $ACCOUNT --skip-simulation --sender $SENDER {{ verify-flags }}
 
-deploy-euler-v2:
-    forge script script/DeployEulerV2.s.sol --rpc-url {{ bc-rpc }} --broadcast --account $ACCOUNT --skip-simulation --sender $SENDER {{ verify-flags }}
+deploy-euler-v2 _usdc=usdc _weth=weth:
+    forge script script/DeployEulerV2.s.sol --rpc-url {{ bc-rpc }} --broadcast --account $ACCOUNT --skip-simulation --sender $SENDER --sig "run(address,address)" {{ _usdc }} {{ _weth }} {{ verify-flags }}
 
 deploy-ccip:
     forge script script/DeployCCIP.s.sol --rpc-url {{ bc-rpc }} --broadcast --account $ACCOUNT --skip-simulation --sender $SENDER {{ verify-flags }}

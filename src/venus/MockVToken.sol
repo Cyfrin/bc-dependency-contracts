@@ -29,10 +29,11 @@ contract MockVToken is ERC20, IVToken {
     constructor(
         string memory name_,
         string memory symbol_,
-        address underlying_
+        address underlying_,
+        address admin_
     ) ERC20(name_, symbol_) {
         underlying = underlying_;
-        admin = msg.sender;
+        admin = admin_;
     }
 
     /// @notice Supply underlying tokens and receive vTokens.
