@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "battlechain": {
+      "source": "cyfrin/solskill",
+      "sourceType": "github",
+      "computedHash": "4f69cc79239f4620c97dff55e0dfe22cfa49b91cb6113719f38e4dd4b2d38767"
+    }
+  }
+}

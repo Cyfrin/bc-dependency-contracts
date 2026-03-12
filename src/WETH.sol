@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.13;
+pragma solidity 0.8.24;
 
 import {ERC20} from "lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
 
 contract WETH is ERC20 {
+    error WETH__EthTransferFailed();
+
     event Deposit(address indexed to, uint256 amount);
     event Withdrawal(address indexed from, uint256 amount);
 
@@ -23,6 +25,6 @@ contract WETH is ERC20 {
         emit Withdrawal(msg.sender, amount);
 
         (bool ok,) = msg.sender.call{value: amount}("");
-        require(ok, "ETH transfer failed");
+        if (!ok) revert WETH__EthTransferFailed();
     }
 }

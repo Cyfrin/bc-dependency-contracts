@@ -15,3 +15,9 @@ docs/
 
 # Cyfrin
 broadcast/
+TODO.md
+*.local.*
+.DS_Store
+.agents/
+.claude/
+zkout/

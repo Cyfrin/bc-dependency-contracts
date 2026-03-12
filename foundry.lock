@@ -1,4 +1,10 @@
 {
+  "lib/battlechain-lib": {
+    "rev": "2da1be38953947f7833d061e9f52ada6e5f42dd4"
+  },
+  "lib/bc-lib": {
+    "rev": "b760d7df51b214b9126df34faa8476a22021e9f8"
+  },
   "lib/forge-std": {
     "tag": {
       "name": "v1.15.0",
@@ -9,6 +15,12 @@
     "tag": {
       "name": "v5.5.0",
       "rev": "fcbae5394ae8ad52d8e580a3477db99814b9d565"
+    }
+  },
+  "lib/v4-core": {
+    "tag": {
+      "name": "v4.0.0",
+      "rev": "e50237c43811bd9b526eff40f26772152a42daba"
     }
   }
 }
