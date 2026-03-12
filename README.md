@@ -1,66 +1,79 @@
-## Foundry
+# bc-dependency-contracts
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+Mock and real protocol deployments for the BattleChain testnet. Deploys tokens, price feeds, and DeFi protocol contracts via the BattleChain deployer (CreateX-based), with optional Safe Harbor registration.
 
-Foundry consists of:
+## Protocols
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+| Script | What it deploys |
+|--------|----------------|
+| `DeployFakeTokens` | MintableERC20 (MTK), WETH, and MintableERC20V2 tokens (USDC, USDT, DAI, WBTC, LINK) |
+| `DeployChainlink` | MockV3Aggregator price feeds (ETH/USD, BTC/USD, LINK/USD, USDC/USD) |
+| `DeployVenus` | Mock Comptroller + VToken markets (vUSDC, vWETH, vWBTC, vDAI, vBNB) |
+| `DeployUniswapV3` | Mock SwapRouter with configurable exchange rates |
+| `DeployUniswapV4` | Uniswap V4 PoolManager singleton |
+| `DeployEulerV2` | Mock EVC + Euler vaults (eUSDC, eWETH) |
+| `DeployCCIP` | Mock CCIP Router for cross-chain message testing |
+| `DeploySafeHarbor` | Registers deployed contracts under a BattleChain Safe Harbor agreement |
 
-## Documentation
+## Prerequisites
 
-https://book.getfoundry.sh/
+- [Foundry](https://book.getfoundry.sh/getting-started/installation)
+- [just](https://github.com/casey/just)
+- A keystore account for broadcasting (see `cast wallet` docs)
 
-## Usage
-
-### Build
-
-```shell
-$ forge build
-```
-
-### Test
-
-```shell
-$ forge test
-```
-
-### Format
+## Setup
 
 ```shell
-$ forge fmt
+git clone --recurse-submodules <repo-url>
+cd bc-dependency-contracts
+forge build
 ```
 
-### Gas Snapshots
+Create a `.env` file:
 
 ```shell
-$ forge snapshot
+SENDER=0xYourDeployerAddress
+ACCOUNT=your-keystore-account-name
 ```
 
-### Anvil
+## Deploy
+
+Deploy a single protocol:
 
 ```shell
-$ anvil
+just deploy-tokens
+just deploy-chainlink
+just deploy-venus
+just deploy-uniswap-v3
+just deploy-uniswap-v4
+just deploy-euler-v2
+just deploy-ccip
 ```
 
-### Deploy
+Deploy everything in order:
 
 ```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+just deploy-all
 ```
 
-### Cast
+Register contracts with Safe Harbor (pass deployed contract addresses):
 
 ```shell
-$ cast <subcommand>
+just deploy-safe-harbor "[0xAddr1,0xAddr2,...]"
 ```
 
-### Help
+## Verify
+
+Verify a single contract:
 
 ```shell
-$ forge --help
-$ anvil --help
-$ cast --help
+just verify <contract_address> <src/Path.sol:ContractName>
 ```
+
+Verify all contracts from a deployment broadcast:
+
+```shell
+just verify-broadcast script/DeployFakeTokens.s.sol
+```
+
+This parses the broadcast JSON for both direct creates and factory creates (via CreateX/BCDeploy), matches each deployed address against compiled artifacts, and submits verification to the block explorer.
