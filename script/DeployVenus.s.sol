@@ -15,7 +15,8 @@ contract DeployScript is BCDeploy {
         address usdc,
         address weth,
         address wbtc,
-        address dai
+        address dai,
+        address usdt
     ) public {
         vm.startBroadcast();
 
@@ -26,7 +27,7 @@ contract DeployScript is BCDeploy {
             )
         );
 
-        address[] memory markets = new address[](5);
+        address[] memory markets = new address[](6);
         markets[0] = bcDeployCreate(
             abi.encodePacked(
                 type(MockVToken).creationCode,
@@ -57,6 +58,12 @@ contract DeployScript is BCDeploy {
                 abi.encode(msg.sender)
             )
         );
+        markets[5] = bcDeployCreate(
+            abi.encodePacked(
+                type(MockVToken).creationCode,
+                abi.encode("Venus USDT", "vUSDT", usdt, msg.sender)
+            )
+        );
 
         for (uint256 i; i < markets.length; i++) {
             MockComptroller(comptroller).listMarket(
@@ -72,5 +79,6 @@ contract DeployScript is BCDeploy {
         console.log("vWBTC:", markets[2]);
         console.log("vDAI:", markets[3]);
         console.log("vBNB:", markets[4]);
+        console.log("vUSDT:", markets[5]);
     }
 }

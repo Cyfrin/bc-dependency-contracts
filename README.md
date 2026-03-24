@@ -13,6 +13,7 @@ Mock and real protocol deployments for the BattleChain testnet. Deploys tokens, 
 | `DeployUniswapV4` | Uniswap V4 PoolManager singleton |
 | `DeployEulerV2` | Mock EVC + Euler vaults (eUSDC, eWETH) |
 | `DeployCCIP` | Mock CCIP Router for cross-chain message testing |
+| `DeployTeleporter` | Mock Teleporter Messenger for Avalanche ICM cross-chain testing |
 | `DeploySafeHarbor` | Registers deployed contracts under a BattleChain Safe Harbor agreement |
 
 ## Prerequisites
@@ -48,6 +49,7 @@ just deploy-uniswap-v3
 just deploy-uniswap-v4
 just deploy-euler-v2
 just deploy-ccip
+just deploy-teleporter <blockchain_id_bytes32>
 ```
 
 Deploy everything in order:

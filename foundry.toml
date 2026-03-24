@@ -13,7 +13,8 @@ remappings = [
     "@safe/=safe-smart-account/contracts/",
 ]
 
+
 [profile.default.lint]
-ignore = ["src/uniswap-v3/**/*.sol"]
+ignore = ["src/uniswap-v3/**/*.sol", "src/teleporter/**/*.sol", "script/DeployTeleporter.s.sol", "src/morpho/**/*.sol", "script/DeployMorpho.s.sol", "src/kyberswap/**/*.sol", "script/DeployKyberSwap.s.sol"]
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
