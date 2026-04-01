@@ -12,6 +12,7 @@ import {IVToken} from "src/venus/IVenus.sol";
 contract MockVToken is ERC20, IVToken {
     using SafeERC20 for IERC20;
 
+    bool public constant isVToken = true;
     address public override underlying;
 
     // Exchange rate scaled by 1e18. Initial: 0.02 underlying per vToken
