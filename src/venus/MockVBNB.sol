@@ -6,6 +6,7 @@ import {IVBnb} from "src/venus/IVenus.sol";
 
 /// @notice Native ETH variant of VToken for Venus protocol.
 contract MockVBNB is ERC20, IVBnb {
+    bool public constant isVToken = true;
     uint256 public exchangeRateStored = 0.02e18;
     mapping(address => uint256) public borrowBalance;
     address public admin;
