@@ -9,9 +9,11 @@ import {console} from "forge-std/console.sol";
 /// @notice Deploys mock Teleporter Messenger for cross-chain message
 /// testing.
 /// Limitations:
-/// - No actual cross-chain delivery (requires Avalanche Warp Messaging)
-/// - receiveCrossChainMessage is admin-only (no Warp precompile)
-/// - Deploys to a new address, NOT the canonical 0x253b...5fcf
+/// - No actual Avalanche Warp Messaging or canonical Teleporter verification
+/// - Cross-chain delivery must be simulated through the mock's explicit
+///   delivery helpers
+/// - `receiveCrossChainMessage` is admin-only because Battlenet does not have
+///   the Warp precompile / validator flow
 contract DeployScript is BCDeploy {
     function run(bytes32 blockchainID) public {
         vm.startBroadcast();

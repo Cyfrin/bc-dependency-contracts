@@ -32,6 +32,8 @@ struct TeleporterFeeInfo {
 }
 
 interface ITeleporterMessenger {
+    event BlockchainIDInitialized(bytes32 indexed blockchainID);
+
     event SendCrossChainMessage(
         bytes32 indexed messageID,
         bytes32 indexed destinationBlockchainID,
@@ -61,6 +63,13 @@ interface ITeleporterMessenger {
         address indexed deliverer,
         address rewardRedeemer,
         TeleporterMessage message
+    );
+
+    event ReceiptReceived(
+        bytes32 indexed messageID,
+        bytes32 indexed destinationBlockchainID,
+        address indexed relayerRewardAddress,
+        TeleporterFeeInfo feeInfo
     );
 
     event RelayerRewardsRedeemed(
