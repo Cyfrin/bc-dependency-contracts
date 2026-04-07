@@ -1,3 +1,10 @@
+// Originally derived from Ava Labs' Avalanche Teleporter contract:
+// https://github.com/ava-labs/teleporter
+// (c) 2023, Ava Labs, Inc. All rights reserved.
+// Modified by Hashfire to use pragma solidity 0.8.24.
+// Original license: Ava Labs Ecosystem License v1.1
+// https://github.com/ava-labs/teleporter/blob/main/LICENSE
+
 // SPDX-License-Identifier: LicenseRef-Ecosystem
 pragma solidity 0.8.24;
 
