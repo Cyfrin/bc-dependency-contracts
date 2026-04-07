@@ -12,7 +12,7 @@ import {console} from "forge-std/console.sol";
 /// - No actual Avalanche Warp Messaging or canonical Teleporter verification
 /// - Cross-chain delivery must be simulated through the mock's explicit
 ///   delivery helpers
-/// - `receiveCrossChainMessage` is admin-only because Battlenet does not have
+/// - `receiveCrossChainMessage` is admin-only because BattleChain does not have
 ///   the Warp precompile / validator flow
 contract DeployScript is BCDeploy {
     function run(bytes32 blockchainID) public {

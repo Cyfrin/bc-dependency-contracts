@@ -14,11 +14,11 @@ import {IERC20} from
 import {SafeERC20} from
     "lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 
-/// @notice Mock TeleporterMessenger for Battlenet cross-chain dispatch and
+/// @notice Mock TeleporterMessenger for BattleChain cross-chain dispatch and
 /// explicit delivery flows.
-/// @dev This is a Battlenet mock implementation. It does not recreate
+/// @dev This is a BattleChain mock implementation. It does not recreate
 /// Avalanche's canonical Teleporter messenger address or Warp precompile
-/// behavior. Protocols running on Battlenet should be configured to use the
+/// behavior. Protocols running on BattleChain should be configured to use the
 /// deployed mock teleporter address directly.
 contract MockTeleporterMessenger is ITeleporterMessenger {
     using SafeERC20 for IERC20;
@@ -40,6 +40,7 @@ contract MockTeleporterMessenger is ITeleporterMessenger {
     mapping(bytes32 => bytes32) private _sentMessageHashes;
     mapping(bytes32 => bytes32) private _receivedMessageHashes;
     mapping(bytes32 => bool) private _receivedMessages;
+    mapping(bytes32 => bool) private _failedMessageExecution;
     mapping(bytes32 => address) private _relayerRewardAddresses;
     mapping(bytes32 => TeleporterFeeInfo) private _messageFees;
     mapping(bytes32 => PendingMessage) private _pendingMessages;
@@ -170,7 +171,11 @@ contract MockTeleporterMessenger is ITeleporterMessenger {
             sourceBlockchainID, message.messageNonce
         );
         bytes32 storedHash = _receivedMessageHashes[messageID];
-        if (storedHash == bytes32(0) || storedHash != keccak256(abi.encode(message))) {
+        if (
+            storedHash == bytes32(0)
+                || storedHash != keccak256(abi.encode(message))
+                || !_failedMessageExecution[messageID]
+        ) {
             revert MessageNotFound(messageID);
         }
 
@@ -361,13 +366,19 @@ contract MockTeleporterMessenger is ITeleporterMessenger {
         bytes32 sourceBlockchainID,
         TeleporterMessage memory message
     ) private {
+        bytes32 deliveredMessageID = _computeMessageID(
+            sourceBlockchainID, message.messageNonce
+        );
+
         try ITeleporterReceiver(message.destinationAddress)
             .receiveTeleporterMessage(
                 sourceBlockchainID, message.originSenderAddress, message.message
             )
         {
+            _setExecutionFailureState(messageID, deliveredMessageID, false);
             emit MessageExecuted(messageID, sourceBlockchainID);
         } catch {
+            _setExecutionFailureState(messageID, deliveredMessageID, true);
             emit MessageExecutionFailed(messageID, sourceBlockchainID, message);
         }
     }
@@ -398,5 +409,16 @@ contract MockTeleporterMessenger is ITeleporterMessenger {
             receipts: emptyReceipts,
             message: pending.message
         });
+    }
+
+    function _setExecutionFailureState(
+        bytes32 messageID,
+        bytes32 deliveredMessageID,
+        bool failed
+    ) private {
+        _failedMessageExecution[messageID] = failed;
+        if (deliveredMessageID != messageID) {
+            _failedMessageExecution[deliveredMessageID] = failed;
+        }
     }
 }
