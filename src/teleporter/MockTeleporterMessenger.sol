@@ -151,7 +151,10 @@ contract MockTeleporterMessenger is ITeleporterMessenger {
         emit AddFeeAmount(messageID, fee);
     }
 
-    /// @notice Admin-only stand-in for Warp-based message receiving.
+    /// @notice Admin-only stub that marks a synthetic message as received.
+    /// @dev Only sets `_receivedMessages`; does not populate message hashes
+    /// or invoke the receiver. `retryMessageExecution` will revert for IDs
+    /// created this way. Use `deliverMessage` for the full send → execute flow.
     function receiveCrossChainMessage(
         uint32,
         address relayerRewardAddress
