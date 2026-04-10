@@ -1,3 +1,10 @@
+// Originally derived from Ava Labs' Avalanche Teleporter contract:
+// https://github.com/ava-labs/teleporter
+// (c) 2023, Ava Labs, Inc. All rights reserved.
+// Modified by Hashfire to use pragma solidity 0.8.24.
+// Original license: Ava Labs Ecosystem License v1.1
+// https://github.com/ava-labs/teleporter/blob/main/LICENSE
+
 // SPDX-License-Identifier: LicenseRef-Ecosystem
 pragma solidity 0.8.24;
 
@@ -32,6 +39,8 @@ struct TeleporterFeeInfo {
 }
 
 interface ITeleporterMessenger {
+    event BlockchainIDInitialized(bytes32 indexed blockchainID);
+
     event SendCrossChainMessage(
         bytes32 indexed messageID,
         bytes32 indexed destinationBlockchainID,
@@ -61,6 +70,13 @@ interface ITeleporterMessenger {
         address indexed deliverer,
         address rewardRedeemer,
         TeleporterMessage message
+    );
+
+    event ReceiptReceived(
+        bytes32 indexed messageID,
+        bytes32 indexed destinationBlockchainID,
+        address indexed relayerRewardAddress,
+        TeleporterFeeInfo feeInfo
     );
 
     event RelayerRewardsRedeemed(
