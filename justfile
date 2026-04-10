@@ -21,6 +21,9 @@ deploy-venus _usdc=usdc _weth=weth _wbtc=wbtc _dai=dai _usdt=usdt:
 deploy-uniswap-v3 _weth=weth:
     forge script script/DeployUniswapV3.s.sol --rpc-url {{ bc-rpc }} --broadcast --account $ACCOUNT --skip-simulation -g 300 --gas-limit 30000000 --sender $SENDER --sig "run(address)" {{ _weth }} --verify {{ bc-verify-flags }}
 
+deploy-uniswap-v3-periphery _factory _weth=weth:
+    forge script script/DeployUniswapV3Periphery.s.sol --rpc-url {{ bc-rpc }} --broadcast --account $ACCOUNT --skip-simulation -g 300 --gas-limit 30000000 --sender $SENDER --sig "run(address,address)" {{ _factory }} {{ _weth }} --verify {{ bc-verify-flags }}
+
 deploy-uniswap-v4:
     just bc-deploy-verify script/DeployUniswapV4.s.sol $ACCOUNT $SENDER
 
