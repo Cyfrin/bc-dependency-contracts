@@ -1,6 +1,6 @@
 # bc-dependency-contracts
 
-Mock and real protocol deployments for the BattleChain testnet. Deploys tokens, price feeds, and DeFi protocol contracts via the BattleChain deployer (CreateX-based), with optional Safe Harbor registration.
+Mock and real protocol deployments for BattleChain testnet and mainnet. Deploys tokens, price feeds, and DeFi protocol contracts via the BattleChain deployer (CreateX-based), with optional Safe Harbor registration.
 
 ## Protocols
 
@@ -10,10 +10,14 @@ Mock and real protocol deployments for the BattleChain testnet. Deploys tokens, 
 | `DeployChainlink` | MockV3Aggregator price feeds (ETH/USD, BTC/USD, LINK/USD, USDC/USD) |
 | `DeployVenus` | Mock Comptroller + VToken markets (vUSDC, vWETH, vWBTC, vDAI, vBNB) |
 | `DeployUniswapV3` | Mock SwapRouter with configurable exchange rates |
+| `DeployUniswapV3Periphery` | Uniswap V3 periphery contracts against an existing factory |
 | `DeployUniswapV4` | Uniswap V4 PoolManager singleton |
 | `DeployEulerV2` | Mock EVC + Euler vaults (eUSDC, eWETH) |
 | `DeployCCIP` | Mock CCIP Router for cross-chain message testing |
 | `DeployTeleporter` | Mock Teleporter Messenger for Avalanche ICM cross-chain testing |
+| `DeployMorpho` | Mock Morpho with 3 lending markets |
+| `DeployKyberSwap` | Mock KyberSwap Router for swap testing |
+| `DeploySafe` | Full Safe smart account suite (singletons, proxy factory, libraries, fallback handlers) |
 | `DeploySafeHarbor` | Registers deployed contracts under a BattleChain Safe Harbor agreement |
 
 ## Prerequisites
@@ -39,6 +43,20 @@ ACCOUNT=your-keystore-account-name
 
 ## Deploy
 
+### Network selection
+
+Recipes target the testnet (chain 627) by default. Prefix any recipe with `mainnet` to target mainnet (chain 626) instead, or set the `NETWORK` environment variable:
+
+```shell
+just deploy-safe                  # testnet
+just mainnet deploy-safe          # mainnet
+NETWORK=mainnet just deploy-safe  # mainnet
+```
+
+Mainnet has no block explorer yet, so mainnet deploys skip contract verification. The default token addresses in the justfile are testnet deployments — on mainnet, deploy tokens first and pass the new addresses explicitly to recipes that take them (`deploy-venus`, `deploy-euler-v2`, `deploy-morpho`, `deploy-uniswap-v3`).
+
+### Recipes
+
 Deploy a single protocol:
 
 ```shell
@@ -50,6 +68,9 @@ just deploy-uniswap-v4
 just deploy-euler-v2
 just deploy-ccip
 just deploy-teleporter <blockchain_id_bytes32>
+just deploy-morpho
+just deploy-kyberswap
+just deploy-safe
 ```
 
 Deploy everything in order:
@@ -66,16 +87,18 @@ just deploy-safe-harbor "[0xAddr1,0xAddr2,...]"
 
 ## Verify
 
+Verification targets the testnet block explorer (mainnet has none yet).
+
 Verify a single contract:
 
 ```shell
-just verify <contract_address> <src/Path.sol:ContractName>
+just bc-verify <contract_address> <src/Path.sol:ContractName>
 ```
 
 Verify all contracts from a deployment broadcast:
 
 ```shell
-just verify-broadcast script/DeployFakeTokens.s.sol
+just bc-verify-broadcast script/DeployFakeTokens.s.sol
 ```
 
 This parses the broadcast JSON for both direct creates and factory creates (via CreateX/BCDeploy), matches each deployed address against compiled artifacts, and submits verification to the block explorer.
