@@ -1,6 +1,9 @@
 {
   "lib/battlechain-lib": {
-    "rev": "2da1be38953947f7833d061e9f52ada6e5f42dd4"
+    "tag": {
+      "name": "0.2.0",
+      "rev": "7f580dfb2cf87be5c590c68d5c82642e0f964233"
+    }
   },
   "lib/bc-lib": {
     "rev": "b760d7df51b214b9126df34faa8476a22021e9f8"

@@ -1,17 +1,10 @@
 set dotenv-load
-set allow-duplicate-variables
 
 import "lib/battlechain-lib/battlechain.just"
 
-# Deploy target: "testnet" (default, chain 627) or "mainnet" (chain 626).
-# Select with `just mainnet <recipe>` or `NETWORK=mainnet just <recipe>`.
-export NETWORK := env("NETWORK", "testnet")
-
-# NETWORK-aware overrides of the imported battlechain.just variables (the vendored copy is testnet-only).
-bc-rpc := if NETWORK == "mainnet" { "https://mainnet.battlechain.com" } else { "https://testnet.battlechain.com" }
-bc-chain-id := if NETWORK == "mainnet" { "626" } else { "627" }
-bc-explorer-api := if NETWORK == "mainnet" { "https://block-explorer-api.mainnet.battlechain.com/api" } else { "https://block-explorer-api.testnet.battlechain.com/api" }
-bc-verify-flags := "--verifier-url " + bc-explorer-api + " --verifier custom --etherscan-api-key 1234"
+# Deploy target: "testnet" (default, chain 627) or "mainnet" (chain 626) — NETWORK,
+# bc-rpc, bc-chain-id, bc-explorer-api, and bc-verify-flags come from the imported
+# battlechain.just. Select with `just mainnet <recipe>` or `NETWORK=mainnet just <recipe>`.
 
 deploy-cmd := "bc-deploy-verify"
 verify-args := "--verify " + bc-verify-flags
