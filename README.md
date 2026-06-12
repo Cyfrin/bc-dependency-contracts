@@ -53,7 +53,7 @@ just mainnet deploy-safe          # mainnet
 NETWORK=mainnet just deploy-safe  # mainnet
 ```
 
-Mainnet has no block explorer yet, so mainnet deploys skip contract verification. The default token addresses in the justfile are testnet deployments — on mainnet, deploy tokens first and pass the new addresses explicitly to recipes that take them (`deploy-venus`, `deploy-euler-v2`, `deploy-morpho`, `deploy-uniswap-v3`).
+Deploys verify contracts on the selected network's block explorer ([testnet](https://explorer.testnet.battlechain.com/), [mainnet](https://explorer.mainnet.battlechain.com/)). The default token addresses in the justfile are testnet deployments — on mainnet, deploy tokens first and pass the new addresses explicitly to recipes that take them (`deploy-venus`, `deploy-euler-v2`, `deploy-morpho`, `deploy-uniswap-v3`).
 
 ### Recipes
 
@@ -85,9 +85,38 @@ Register contracts with Safe Harbor (pass deployed contract addresses):
 just deploy-safe-harbor "[0xAddr1,0xAddr2,...]"
 ```
 
+## Mainnet deployments (chain 626)
+
+The Safe suite is deployed on BattleChain mainnet (from the `DeploySafe` broadcast):
+
+| Contract | Address |
+|----------|---------|
+| Safe | `0xFF716747B4D28EAE844Dc069387C9bFC00e51737` |
+| SafeL2 | `0xb6524C4fBcEd314EAad98Bc750B6AD76B64d7f8A` |
+| SafeProxyFactory | `0x8d0D56f72E266a4BfA05340f68409dEBbdbdc9e2` |
+| CreateCall | `0x5A499D08755a9dC90208Ef5b031a3118789EBF5A` |
+| MultiSend | `0x28E369665036bFe0041c1E5838A608b1a818296f` |
+| MultiSendCallOnly | `0xed4c81c91602CDD5c1e396a1AF28735E03EdA9e2` |
+| SignMessageLib | `0x95cb704BFF25b8943BcE3fAE5D1b4665f7b08115` |
+| SafeToL2Setup | `0xa8fB860254764C68360596f64BA841b077bebBA4` |
+| TokenCallbackHandler | `0x63b920c6D0B5EC07345d9810169376192654d38F` |
+| CompatibilityFallbackHandler | `0x2744C4f8336B6e2A8a182495FbB327Db493F303f` |
+| ExtensibleFallbackHandler | `0x115b290ecDe805FD846E0C347f3419A4234Fd673` |
+
+CreateX is deployed on mainnet at `0xa397f06F07251A3AEd53f6d3019A2a6cbd83E53e` (not at the canonical CreateX address used on other chains). The core BattleChain contracts (Safe Harbor registry, agreement factory, attack registry, deployer) are also live on mainnet; see [battlechain-lib](https://github.com/cyfrin/battlechain-lib) for their addresses.
+
+Create a 1-of-1 Safe. The factory, singleton, and fallback handler default to the selected network's SafeProxyFactory, SafeL2, and CompatibilityFallbackHandler (for mainnet, the addresses above):
+
+```shell
+just create-safe <owner> [salt]          # testnet
+just mainnet create-safe <owner> [salt]  # mainnet
+```
+
+The Safe address is deterministic (CREATE2); bump the salt to create another Safe for the same owner. The mock protocol deployments (tokens, Chainlink, Venus, Euler, Morpho, KyberSwap, CCIP, Teleporter) remain testnet-only.
+
 ## Verify
 
-Verification targets the testnet block explorer (mainnet has none yet).
+Verification targets the selected network's block explorer (testnet by default; prefix with `mainnet` to verify on the mainnet explorer).
 
 Verify a single contract:
 

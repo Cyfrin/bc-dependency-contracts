@@ -7,13 +7,14 @@ import "lib/battlechain-lib/battlechain.just"
 # Select with `just mainnet <recipe>` or `NETWORK=mainnet just <recipe>`.
 export NETWORK := env("NETWORK", "testnet")
 
+# NETWORK-aware overrides of the imported battlechain.just variables (the vendored copy is testnet-only).
 bc-rpc := if NETWORK == "mainnet" { "https://mainnet.battlechain.com" } else { "https://testnet.battlechain.com" }
-
-# Mainnet has no block explorer yet, so skip contract verification there.
-bc-explorer-api := "https://block-explorer-api.testnet.battlechain.com/api"
+bc-chain-id := if NETWORK == "mainnet" { "626" } else { "627" }
+bc-explorer-api := if NETWORK == "mainnet" { "https://block-explorer-api.mainnet.battlechain.com/api" } else { "https://block-explorer-api.testnet.battlechain.com/api" }
 bc-verify-flags := "--verifier-url " + bc-explorer-api + " --verifier custom --etherscan-api-key 1234"
-deploy-cmd := if NETWORK == "mainnet" { "bc-deploy" } else { "bc-deploy-verify" }
-verify-args := if NETWORK == "mainnet" { "" } else { "--verify " + bc-verify-flags }
+
+deploy-cmd := "bc-deploy-verify"
+verify-args := "--verify " + bc-verify-flags
 
 # Run any recipe against mainnet: just mainnet deploy-safe
 mainnet *args:
@@ -63,10 +64,10 @@ deploy-kyberswap:
 deploy-safe:
     just {{ deploy-cmd }} script/DeploySafe.s.sol $ACCOUNT $SENDER
 
-# Safe suite addresses (mainnet only, from DeploySafe broadcast on chain 626)
-safe-proxy-factory := "0x8d0D56f72E266a4BfA05340f68409dEBbdbdc9e2"
-safe-l2-singleton := "0xb6524C4fBcEd314EAad98Bc750B6AD76B64d7f8A"
-safe-fallback-handler := "0x2744C4f8336B6e2A8a182495FbB327Db493F303f"
+# Safe suite addresses per network (from DeploySafe broadcasts on chains 626/627)
+safe-proxy-factory := if NETWORK == "mainnet" { "0x8d0D56f72E266a4BfA05340f68409dEBbdbdc9e2" } else { "0x80DbD037C59521F393fDfE15504c6b6b7969F1a1" }
+safe-l2-singleton := if NETWORK == "mainnet" { "0xb6524C4fBcEd314EAad98Bc750B6AD76B64d7f8A" } else { "0x71314F3E6B1D9386A1de784B644Cf5D0Dde3bB97" }
+safe-fallback-handler := if NETWORK == "mainnet" { "0x2744C4f8336B6e2A8a182495FbB327Db493F303f" } else { "0xc6B2C6982A5643b7702894D4A0901b9371dd1283" }
 
 # Create a 1-of-1 Safe. Address is deterministic (CREATE2); bump _salt to create another for the same owner.
 create-safe _owner _salt="0" _factory=safe-proxy-factory _singleton=safe-l2-singleton _handler=safe-fallback-handler:
