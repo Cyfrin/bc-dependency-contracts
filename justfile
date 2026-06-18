@@ -81,3 +81,7 @@ deploy-all:
 
 deploy-safe-harbor *contracts="":
     forge script script/DeploySafeHarbor.s.sol --rpc-url {{ bc-rpc }} --broadcast --account $ACCOUNT --skip-simulation --sender $SENDER --sig "run(address[])" {{ contracts }}
+
+# # Multicall3 (canonical) — deployed at the same address on every EVM chain
+# multicall3 := "0xcA11bde05977b3631167028862bE2a173976CA11"
+# multicall3-deployer := "0x05f32b3cc3888453ff71b01135b34ff8e41263f2"

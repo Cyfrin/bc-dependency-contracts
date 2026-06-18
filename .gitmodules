@@ -19,3 +19,6 @@
 [submodule "lib/battlechain-lib"]
 	path = lib/battlechain-lib
 	url = https://github.com/cyfrin/battlechain-lib
+[submodule "lib/multicall3"]
+	path = lib/multicall3
+	url = https://github.com/mds1/multicall3

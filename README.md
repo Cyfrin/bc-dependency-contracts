@@ -19,6 +19,7 @@ Mock and real protocol deployments for BattleChain testnet and mainnet. Deploys 
 | `DeployKyberSwap` | Mock KyberSwap Router for swap testing |
 | `DeploySafe` | Full Safe smart account suite (singletons, proxy factory, libraries, fallback handlers) |
 | `DeploySafeHarbor` | Registers deployed contracts under a BattleChain Safe Harbor agreement |
+| `Multicall3` | Canonical [Multicall3](https://github.com/mds1/multicall3) at `0xcA11…CA11` via pre-signed tx (`just deploy-multicall3`, **mainnet only**) |
 
 ## Prerequisites
 
@@ -84,6 +85,19 @@ Register contracts with Safe Harbor (pass deployed contract addresses):
 ```shell
 just deploy-safe-harbor "[0xAddr1,0xAddr2,...]"
 ```
+
+### Multicall3 (canonical)
+
+[Multicall3](https://github.com/mds1/multicall3) is deployed at `0xcA11bde05977b3631167028862bE2a173976CA11` — the address foundry, viem, wagmi, and ethers expect — using mds1's pre-signed "Nick's method" transaction (vendored as the `lib/multicall3` submodule and `script/multicall3-presigned-tx.txt`):
+
+```shell
+just mainnet deploy-multicall3   # deploy (chain 626)
+just mainnet verify-multicall3   # verify on the mainnet explorer
+```
+
+`deploy-multicall3` is idempotent: it skips if Multicall3 already exists, estimates the deploy gas, funds the canonical deployer (`0x05f32b3cc3888453ff71b01135b34ff8e41263f2`) with exactly 0.1 ETH (the pre-signed tx's fixed 1,000,000 gas × 100 gwei), then broadcasts the pre-signed transaction. Verification reuses the submodule's exact upstream build config (solc 0.8.12, optimizer enabled with 10,000,000 runs).
+
+**Mainnet only.** The pre-signed transaction caps gas at 1,000,000. Mainnet deploys Multicall3 in ~881k gas, but testnet (chain 627) needs ~3.76M (its gas metering is not EVM-equivalent), so the recipe refuses to run there rather than burn the deployer's nonce and 0.1 ETH. On testnet the canonical address is only reachable as a genesis predeploy.
 
 ## Mainnet deployments (chain 626)
 
